@@ -1,10 +1,46 @@
 
 # Combine
 
+A `declrative Swift API` for `processing values over time`. I allows us to write `functional reactive` code. 
+A functional reactive proramming allow you to process values over time. These kind of values are - Network response, userinterface events and other asynchronous event.
+
+Example of FPR resonse:
+- A network response is received.
+- Its data is mapped to a JSON model.
+- It is then assigned to a view.
+
 ## Table of Content
+- [Introduction](#combine)
+- [Functional Reactive Programming](#functional-reactive-programming)
 - [Publisher](#publisher)
 
+## Functional Reactive Programming
+
+Functional Reactive Programming in Swift is a programming paradigm that combines `functinal programming` and `Reactive programming` to manage and compose asynchronous data stream. It allow us to handle data flows and the propagation change, making it easier to work with dynamic and time-varying values.
+
+### Key concept in FRP:
+
+- **Streams:** It treats data as a continuous stream of values over time. These streams can be observed and manipulated.
+
+- **Signals:** Signals are the basic building block of FRP. One can subscribe to the signal to get notified whenever a new value is emitted.
+
+- **Events:** Events are the individual values or occurances within a stream. They can represent anything from user inputs to network responses.
+
+- **Observables:** Observables are types that represent a collection of future events. They allow you to define asynchronous sequences of data that can be observed.
+
+- **Schedulers:** Schedulers control the execution context of signals and streams, allowing you to manage threading and concurrency.
+
+- **Bindings:** FRP allows you to bind signals to UI elements or other data structures, ensuring that updates propagate automatically.
+
+
 ## Publisher
+
+A publisher exposes values(that can change) on which a subscriber subscribes to receives all the updates.
+
+- Publisher are like Observables.
+- Subscribers are like Observers.
+
+A Combine publisher is an object that sends values to its subscribers over time. Sometimes this is a single value, and other times a publisher can transmit multiple values or no values at all.
 
 This defines how values and errors are produced over time. Its a value type which means we use struct. Publishers allow registration of subscribers. It provides data when available and upon request.
 

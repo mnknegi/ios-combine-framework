@@ -1,4 +1,8 @@
-# ios-combine-framework
+
+# Combine
+
+- Combine is a `reactive programming` framework introduced by Apple in iOS 13 (also macOS 10.15, watchOS 6, etc.). It allows developers to write `asynchronous`, `event-driven` code in a declarative way.
+- Combine lets you “combine” different data streams (like UI events, network responses, user input) and react to their changes over time.
 
 ## Functional Reactive Programming
 
@@ -24,7 +28,106 @@
 - Both sink and assign return an object called `AnyCancellable`.
 - When the AnyCancellable is deallocated, any subscription that is associated with this object is torn down along with it.
 
-## Transforming Publishers
+## Core Concepts
+
+- Publisher: Emits a stream of values over time. Example: `URLSession.DataTaskPublisher`, `Just`, `NotificationCenter.Publisher`.
+- Subscriber: Listens to values from a Publisher and performs work.
+- Operators: Transform, filter, or combine values (like .map, .filter, .debounce, .merge).
+- Subject: A special Publisher you can manually send values to (e.g., PassthroughSubject, CurrentValueSubject).
+- Cancellable: A token you use to cancel a subscription.
+
+## Why Use Combine?
+
+- Avoid callback hell and nested closures.
+- Better handling of async streams.
+- Works well with SwiftUI (via @Published, .onReceive, etc.).
+- Replace patterns like NotificationCenter, KVO, Delegates, and Closures.
+
+## Publisher Protocol
+
+The Publisher protocol in Combine is the `core abstraction` that represents a `stream of asynchronous values over time`. It defines how data is emitted and how subscribers receive that data.
+
+```
+protocol Publisher {
+    associatedtype Output
+    assocaitedtype Failure: Error
+    
+    func receive<S: Subscriber>(subscriber: S) where S.Input == Output, S.Faiure == Failure
+}
+```
+
+- Output: The type of value the publisher emits (e.g., String, Int, Data, custom model).
+- Failure: The type of error the publisher might emit (must conform to Error).
+- receive(subscriber:): Called when a subscriber subscribes to this publisher.
+
+Publisher is the starting point of the Combine pipeline.
+It defines what values are emitted (Output) and what kind of errors might occur (Failure).
+Every Combine stream starts with a Publisher and ends with a Subscriber.
+
+## Subscriber
+
+In Combine, a Subscriber is an object that receives values and completion events from a Publisher.
+It represents the end of a Combine pipeline, and it defines how to handle emitted values, completion, and subscription lifecycle.
+
+```
+protocol Subscriber {
+    assocaitedtype Input
+    assocaitedtype Failure: Error
+    
+    func receive(subscription: Subscription)
+    func receive(_ input: Input) -> Subscribers.Demand
+    func receive(completion: Subscribers.completion<Failure>)
+}
+```
+
+- receive(subscription:): Called once when subscribed.
+- receive(_:): Called every time the publisher emits a new value.
+- receive(completion:): Called once when the publisher finishes or fails.
+
+## Subscriber Types in Combine
+
+You typically don’t create your own subscribers directly. Combine provides:
+
+- sink(receiveValue:): 
+
+```
+let cancellable = Just("Hello")
+    .sink { value in
+        print("Received value: \(value)")
+    }
+```
+
+- assign(to:on:)
+
+```
+class MyViewModel: ObservableObject {
+    @Published var name = ""
+}
+
+let viewModel = MyViewModel()
+
+let cancellable = Just("Swift")
+    .assign(to: \.name, on: viewModel)
+
+```
+
+The subscriber types created by `sink(receiveCompletion:receiveValue:)` and `assign(to:on:)` both implement the Cancellable protocol, which provides a cancel() method.
+
+The publisher sends a `Subscription` object when you first subscribe to it. Store this subscription, and then call its cancel() method when you want to cancel publishing.
+
+## Cancellable Protocol
+
+The Cancellable protocol is used to `manage the lifecycle of a subscription`. It helps you cancel work or data streams when you no longer need them — especially useful for cleaning up and avoiding memory leaks.
+
+```
+public protocol Cancellable {
+    func cancel()
+}
+```
+
+Most commonly, it’s returned by Combine operators like `.sink`, `.assign` etc.
+
+## Transforming Publishers(Sequence modifying operators)
 
 If we want to apply an operator to the output of a publisher that would transform that output into a new publisher, we'd have a publisher that would publishes other publishers.
 

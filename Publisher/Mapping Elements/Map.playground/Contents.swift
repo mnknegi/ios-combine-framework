@@ -1,8 +1,7 @@
 
 import Combine
-import PlaygroundSupport
 
-PlaygroundPage.current.needsIndefiniteExecution = true
+// transforms all elements from the upstream publisher with a provided closure.
 
 let numbers = [5, 4, 3, 2, 1, 0]
 let romanNumeralDict: [Int: String] = [

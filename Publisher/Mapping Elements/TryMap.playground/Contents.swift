@@ -2,6 +2,8 @@
 import Foundation
 import Combine
 
+// transforms all elements from the upstream publisher with a provided error-throwing closure.
+
 struct ParseError: Error { }
 
 func romanNumeral(from: Int) throws -> String {

@@ -84,3 +84,13 @@ numbers.publisher
           receiveValue: {"value: \($0)"} )
     .store(in: &cancellable)
 
+print("-----")
+
+/* max(by:) */
+// Publishes the minimum value received from the upstream publisher, after it finishes.
+
+
+numbers.publisher
+    .min()
+    .sink(receiveValue: { print("value:\($0)") })
+    .store(in: &cancellable)
